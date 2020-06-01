@@ -1,0 +1,92 @@
+html,
+body {
+  height: 100%;
+  background-color: #282c34;
+  padding: 0;
+  margin: 0;
+  color: white;
+  font-family: 'Nimbus Sans L';
+  font-size: 15px;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100%;
+}
+
+#app > * {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Titles */
+
+#titles {
+  display: block;
+  background-color: #21252b;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#titles > * {
+  display: inline-block;
+  padding: 10px;
+  min-width: 30px;
+  max-width: 100px;
+  cursor: default;
+  user-select: none;
+}
+
+#titles > * > .close {
+  float: right;
+  margin-left: 10px;
+}
+
+#titles > *.changes > .close::after {
+  content: '•';
+}
+
+#titles > *:not(.changes) > .close::after {
+  content: 'x';
+}
+
+#titles > .active {
+  background-color: #282c34;
+}
+
+#titles > :not(.active) {
+  opacity: 0.2;
+}
+
+/* Editors */
+
+#editors {
+  flex-grow: 1;
+}
+
+#editors > * {
+  height: 100%;
+}
+
+#editors > :not(.active) {
+  display: none;
+}
+
+/* Statuses */
+
+#statusbar {
+  background-color: #21252b;
+}
+
+#statusbar > * {
+  margin: 0;
+  padding: 4px;
+  font-size: 14px;
+}
+
+#statusbar > :not(.active) {
+  display: none;
+}

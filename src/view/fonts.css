@@ -1,0 +1,71 @@
+/* Nimbus Sans L */
+@font-face {
+  font-family: 'Nimbus Sans L';
+  src: local('Nimbus Sans L Bold'), local('NimbusSanL-Bol'), url('fonts/NimbusSansL/NimbusSanL-Bol.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Nimbus Sans L';
+  src: local('Nimbus Sans L Regular Italic'), local('NimbusSanL-RegIta'), url('fonts/NimbusSansL/NimbusSanL-RegIta.woff2') format('woff2');
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Nimbus Sans L';
+  src: local('Nimbus Sans L Bold Italic'), local('NimbusSanL-BolIta'), url('fonts/NimbusSansL/NimbusSanL-BolIta.woff2') format('woff2');
+  font-weight: bold;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Nimbus Sans L';
+  src: local('Nimbus Sans L Regular'), local('NimbusSanL-Reg'), url('fonts/NimbusSansL/NimbusSanL-Reg.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Fira Code */
+@font-face {
+  font-family: 'Fira Code';
+  src: url('fonts/FiraCode/FiraCode-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Fira Code';
+  src: url('fonts/FiraCode/FiraCode-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Fira Code';
+  src: url('fonts/FiraCode/FiraCode-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Fira Code';
+  src: url('fonts/FiraCode/FiraCode-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Fira Code';
+  src: url('fonts/FiraCode/FiraCode-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Fira Code VF';
+  src: url('fonts/FiraCode/FiraCode-VF.woff2') format('woff2-variations');
+  font-weight: 300 700;
+  font-style: normal;
+}

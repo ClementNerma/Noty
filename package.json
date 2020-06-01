@@ -1,0 +1,28 @@
+{
+  "name": "noty-app",
+  "displayName": "Noty",
+  "license": "Apache-2.0",
+  "main": "dist/shell/shell.js",
+  "author": {
+    "name": "Clément Nerma",
+    "email": "clement.nerma@gmail.com",
+    "url": "https://github.com/ClementNerma"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "start": "npm run build && electron .",
+    "start-nobuild": "electron ."
+  },
+  "dependencies": {
+    "@types/minimist": "^1.2.0",
+    "electron": "^9.0.0",
+    "minimist": "^1.2.5",
+    "typescript": "^3.9.3",
+    "typescript-core": "^1.3.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ClementNerma/Nox"
+  }
+}
