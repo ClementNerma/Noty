@@ -3,24 +3,24 @@
 import * as fs from 'fs'
 import * as npath from 'path'
 import * as minimist from 'minimist'
-import { app, dialog, screen, globalShortcut, BrowserWindow, Tray, NativeImage, Menu, Event } from 'electron'
+import { app, dialog, screen, globalShortcut, BrowserWindow, Tray, Menu, Event } from 'electron'
+import { MaybeUninit, proxies } from 'typescript-core'
 
 function fail(errorMessage: string, details?: string): never {
   dialog.showMessageBoxSync({
     type: 'error',
     buttons: ['OK'],
     defaultId: 0,
-    title: 'Nox error',
+    title: 'Nox - Internal Error',
     message: errorMessage,
     detail: details,
-    icon: NativeImage.createFromPath(APP_ICON_PATH),
   })
 
   process.exit(1)
 }
 
 function validateResource(title: string, pathParts: string[]): string {
-  const path = npath.join(...pathParts)
+  const path = npath.join(__dirname, '..', ...pathParts)
 
   if (!fs.existsSync(path)) {
     fail(`Resource "${title}" was not found`, `Path "${path}" was not found`)
@@ -29,8 +29,10 @@ function validateResource(title: string, pathParts: string[]): string {
   return path
 }
 
-const APP_ICON_PATH = validateResource('icon', ['assets', 'icon.png'])
-const HTML_VIEW_PATH = validateResource('view', ['src', 'view', 'index.html'])
+proxies.panicWatcher = (message) => fail(message)
+
+const APP_ICON_PATH = new MaybeUninit<string>()
+const HTML_VIEW_PATH = new MaybeUninit<string>()
 
 const cmdArgs = minimist(process.argv.slice(2))
 
@@ -50,7 +52,7 @@ function createWindow() {
     show: false,
   })
 
-  mainWindow.loadFile(npath.join(process.cwd(), HTML_VIEW_PATH))
+  mainWindow.loadFile(HTML_VIEW_PATH.expect("HTML view's path was not initialized"))
   mainWindow.removeMenu()
   mainWindow.setFullScreen(false)
 
@@ -79,7 +81,7 @@ function createWindow() {
 
   mainWindow.setMenuBarVisibility(false)
 
-  appIcon = new Tray(APP_ICON_PATH)
+  appIcon = new Tray(APP_ICON_PATH.expect("App icon's path was not initialized"))
 
   appIcon.on('click', () => showWindow())
 
@@ -129,7 +131,12 @@ function showWindow() {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+app.on('ready', () => {
+  APP_ICON_PATH.init(validateResource('icon', ['assets', 'icon.png']))
+  HTML_VIEW_PATH.init(validateResource('view', ['view', 'index.html']))
+
+  createWindow()
+})
 
 app.on('before-quit', () => (isQuiting = true))
 

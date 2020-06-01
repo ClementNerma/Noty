@@ -14,7 +14,7 @@
     "lib": ["ESNext", "DOM"],
     "target": "es2019",
     "inlineSourceMap": true,
-    "outDir": "dist"
+    "outDir": "build"
   },
   "include": ["src/**/*.ts"]
 }
