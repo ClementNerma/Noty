@@ -55,22 +55,26 @@ body {
   padding: 10px;
   min-width: 30px;
   max-width: 100px;
+  line-height: 16px;
   cursor: default;
   user-select: none;
   -webkit-app-region: no-drag;
 }
 
 #titles > * > .close {
-  float: right;
+  display: inline-block;
   margin-left: 10px;
 }
 
 #titles > *.changes > .close::after {
   content: '•';
+  font-size: 24px;
+  vertical-align: bottom;
 }
 
 #titles > *:not(.changes) > .close::after {
-  content: 'x';
+  content: '×';
+  font-size: 18px;
 }
 
 #titles > .active {

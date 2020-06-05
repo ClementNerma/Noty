@@ -53,7 +53,7 @@ export class Tab {
     this.titleNameDom = createElement('span', { class: 'title' }, 'Loading...')
     this.titleDom.appendChild(this.titleNameDom)
 
-    this.titleCloseDom = createElement('span', { class: 'close' })
+    this.titleCloseDom = createElement('span', { class: 'close', title: 'Close this tab' })
     this.titleDom.appendChild(this.titleCloseDom)
 
     insertNthChild(this.titleDom, titlesDom, params.position ?? -1)
