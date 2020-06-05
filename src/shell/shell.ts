@@ -50,6 +50,7 @@ function createWindow() {
     },
     useContentSize: true,
     show: false,
+    icon: APP_ICON_PATH.expect("App icon's path was not initialized"),
   })
 
   mainWindow.loadFile(HTML_VIEW_PATH.expect("HTML view's path was not initialized"))
