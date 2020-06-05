@@ -26,7 +26,7 @@ export function insertNthChild(child: Element, parent: Element, nth: number) {
 }
 
 // Get contains
-export const titlesDom = document.getElementById('titles') ?? fail('Failed to get element "#titles"')
-export const editorsDom = document.getElementById('editors') ?? fail('Failed to get element "#editors"')
-export const statusBarDom = document.getElementById('statusbar') ?? fail('Failed to get element "#statusbar"')
+export const titlesDom = q('#titles').expect('Failed to get element "#titles"')
+export const editorsDom = q('#editors').expect('Failed to get element "#editors"')
+export const statusBarDom = q('#statusbar').expect('Failed to get element "#statusbar"')
 export const dragOverlay = q('#drag-overlay').expect("Could not get element '#drag-overlay'")
