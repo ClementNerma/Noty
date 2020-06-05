@@ -56,9 +56,17 @@ body {
   min-width: 30px;
   max-width: 100px;
   line-height: 16px;
-  cursor: default;
+  cursor: pointer;
   user-select: none;
   -webkit-app-region: no-drag;
+}
+
+#titles > *:hover {
+  background-color: #323842;
+}
+
+#titles > .active {
+  background-color: #282c34;
 }
 
 #titles > * > .close {
@@ -66,19 +74,15 @@ body {
   margin-left: 10px;
 }
 
-#titles > *.changes > .close::after {
+#titles > .changes > .close::after {
   content: '•';
   font-size: 24px;
   vertical-align: bottom;
 }
 
-#titles > *:not(.changes) > .close::after {
+#titles > :not(.changes) > .close::after {
   content: '×';
   font-size: 18px;
-}
-
-#titles > .active {
-  background-color: #282c34;
 }
 
 #titles > :not(.active) {
