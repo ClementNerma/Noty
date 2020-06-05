@@ -7,6 +7,7 @@ import { settingsPath, invalidatedSettingsPath } from './data/paths'
 import { Tab } from './tab'
 import { actions } from './actions'
 import { fail, error, onTabUpdate, setCurrentTab, tabs, settings } from './state'
+import { dragOverlay } from './dom'
 
 // Must be run at startup
 dataInit()
@@ -40,6 +41,19 @@ loadSession().map((session) => {
     })
 
   tabs.push(...newTabs)
+})
+
+// Make the frameless window draggable
+window.addEventListener('keydown', (event) => {
+  if (!event.ctrlKey && !event.shiftKey && event.altKey) {
+    dragOverlay.classList.add('draggable')
+  }
+})
+
+window.addEventListener('keyup', (event) => {
+  if (!event.ctrlKey && !event.shiftKey && !event.altKey) {
+    dragOverlay.classList.remove('draggable')
+  }
 })
 
 // Set up keyboard shortcuts

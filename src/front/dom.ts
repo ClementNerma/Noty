@@ -29,3 +29,4 @@ export function insertNthChild(child: Element, parent: Element, nth: number) {
 export const titlesDom = document.getElementById('titles') ?? fail('Failed to get element "#titles"')
 export const editorsDom = document.getElementById('editors') ?? fail('Failed to get element "#editors"')
 export const statusBarDom = document.getElementById('statusbar') ?? fail('Failed to get element "#statusbar"')
+export const dragOverlay = q('#drag-overlay').expect("Could not get element '#drag-overlay'")

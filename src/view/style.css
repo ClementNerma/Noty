@@ -9,6 +9,24 @@ body {
   font-size: 15px;
 }
 
+#drag-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: transparent;
+  z-index: 9999;
+
+  display: none;
+  -webkit-app-region: no-drag;
+}
+
+#drag-overlay.draggable {
+  display: block;
+  -webkit-app-region: drag;
+}
+
 #app {
   display: flex;
   flex-direction: column;
@@ -29,6 +47,7 @@ body {
   background-color: #21252b;
   padding-left: 5px;
   padding-right: 5px;
+  -webkit-app-region: drag;
 }
 
 #titles > * {
@@ -38,6 +57,7 @@ body {
   max-width: 100px;
   cursor: default;
   user-select: none;
+  -webkit-app-region: no-drag;
 }
 
 #titles > * > .close {
