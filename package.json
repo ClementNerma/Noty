@@ -3,7 +3,6 @@
   "displayName": "Noty",
   "license": "Apache-2.0",
   "version": "0.0.1",
-  "main": "build/shell/shell.js",
   "author": {
     "name": "Clément Nerma",
     "email": "clement.nerma@gmail.com",
@@ -11,7 +10,6 @@
   },
   "scripts": {
     "build": "rimraf build && tsc && ncp assets build/assets --stopOnErr && ncp src/view build/view --stopOnErr && ncp src/electron-package.json build/package.json --stopOnErr",
-    "watch": "tsc -w",
     "start": "npm run build && electron build/",
     "start-nobuild": "electron build/",
     "tools:ace:update": "bash tools/ace-update.bash src/front/libs/ace.js src/view/ace.js"
