@@ -9,6 +9,22 @@ body {
   font-size: 15px;
 }
 
+body.loading #loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9998;
+
+  /* NOTE: Must be the same as the window's background color set in the shell! */
+  background-color: #282c34;
+}
+
+body:not(.loading) #loading-overlay {
+  display: none;
+}
+
 #drag-overlay {
   position: absolute;
   top: 0;

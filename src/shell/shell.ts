@@ -62,6 +62,9 @@ function createWindow() {
     useContentSize: true,
     show: false,
     icon: APP_ICON_PATH.expect("App icon's path was not initialized"),
+
+    // NOTE: Must be the same as the color defined in the main page's loading overlay
+    backgroundColor: '#282c34',
   })
 
   mainWindow.loadFile(HTML_VIEW_PATH.expect("HTML view's path was not initialized"))

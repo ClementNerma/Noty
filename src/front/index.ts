@@ -86,3 +86,6 @@ window.addEventListener('keydown', (event) => {
   }
   return
 })
+
+// Finished loading
+document.body.classList.remove('loading')
