@@ -55,7 +55,7 @@ export class Tab {
       assert(!Tab.ids.includes(params.id), `Internal error: cannot create two tabs with the same ID (${params.id})`)
 
       if (params.id >= Tab.id) {
-        Tab.id = params.id
+        Tab.id = params.id + 1
       }
 
       this.id = params.id
