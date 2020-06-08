@@ -49,6 +49,7 @@ export function saveUpdatedSession(): Result<void, Error> {
       path: tab.getPath(),
       language: tab.getLanguage(),
       originalContent: tab.getOriginalContentInfos(),
+      cursorPosition: tab.getCursorPosition(),
     })),
   }).withErr((err) => errorDialog('Failed to save session to disk:\n>' + err.message))
 }
@@ -84,5 +85,7 @@ export function onTabUpdate(tab: Tab) {
 
 // Handle tab closing
 export function onTabClose(tab: Tab) {
-  removeSaved(tab.id).withErr((err) => console.error('Failed to remove saved file for tab with ID ' + tab.id, err))
+  saveUpdatedSession()
+    .andThen(() => removeSaved(tab.id))
+    .withErr((err) => console.error('Failed to remove saved file for tab with ID ' + tab.id, err))
 }

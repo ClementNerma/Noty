@@ -15,6 +15,7 @@ export interface TabParams {
   readonly path: Option<string>
   readonly language: Option<string>
   readonly originalContent?: OriginalContent
+  readonly cursorPosition?: CursorPosition
   readonly current?: boolean
   readonly content: string
   readonly onUpdate: (tab: Tab, content: string, cursor: CursorPosition) => void
@@ -112,6 +113,11 @@ export class Tab {
     this.previousContent = params.content
     this.previousContentLength = params.content.length
     this.setContent(params.content, false, true)
+
+    // Set cursor position
+    if (params.cursorPosition) {
+      this.editor.gotoLine(params.cursorPosition.row + 1, params.cursorPosition.column)
+    }
 
     // Indicate if there is any change compared to the original content
     this._updateTitleStatus()

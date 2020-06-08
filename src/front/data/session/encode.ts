@@ -25,9 +25,10 @@ export function encodeSession(session: Session): string {
     tabs: session.tabs
       .map((tab) => ({
         id: tab.id,
+        path: tab.path.toNullable(),
         language: tab.language.toNullable(),
         originalContent: tab.originalContent,
-        path: tab.path.toNullable(),
+        cursorPosition: tab.cursorPosition,
       }))
       .toArray(),
   }

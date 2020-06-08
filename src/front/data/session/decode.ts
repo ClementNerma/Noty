@@ -1,5 +1,7 @@
 import { Decoder, List, Option, Decoders as d, JsonDecoders as j } from 'typescript-core'
 
+import { CursorPosition } from '../../tab'
+
 interface _SessionTab {
   readonly id: number
   readonly path: Option<string>
@@ -8,6 +10,7 @@ interface _SessionTab {
     readonly hash: string
     readonly length: number
   }
+  readonly cursorPosition: CursorPosition
 }
 
 export interface Session {
@@ -23,7 +26,7 @@ export const decodeSession: Decoder<string, Session> = d.then(
     [
       'tabs',
       j.arrayOf(
-        j.mapped4([
+        j.mapped5([
           ['id', j.number],
           ['path', j.optional(j.string)],
           ['language', j.optional(j.string)],
@@ -32,6 +35,13 @@ export const decodeSession: Decoder<string, Session> = d.then(
             j.mapped2([
               ['hash', j.string],
               ['length', j.number],
+            ]),
+          ],
+          [
+            'cursorPosition',
+            j.mapped2([
+              ['row', j.number],
+              ['column', j.number],
             ]),
           ],
         ])
