@@ -1,4 +1,4 @@
-import { Decoder, JsonDecoder, JsonValue, List, O, Option, Decoders as d, JsonDecoders as j, proxies } from 'typescript-core'
+import { Decoder, JsonDecoder, JsonValue, List, O, Decoders as d, JsonDecoders as j } from 'typescript-core'
 
 import { actions } from '../actions'
 import { themes } from '../enums'

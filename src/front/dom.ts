@@ -1,7 +1,5 @@
 import { Collection, O, Option } from 'typescript-core'
 
-import { fail } from './state'
-
 export function q(selector: string): Option<Element> {
   return Option.nullable(document.querySelector(selector))
 }

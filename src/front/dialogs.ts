@@ -1,4 +1,4 @@
-import { Enum, FailableFuture, Future, None, O, Option, Result, Some, assert, enumStr, forceType } from 'typescript-core'
+import { Enum, None, O, Option, Some, assert, enumStr, forceType } from 'typescript-core'
 
 import { remote } from 'electron'
 
