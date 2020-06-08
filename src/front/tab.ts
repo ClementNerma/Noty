@@ -4,6 +4,7 @@ import { applySettings, Settings } from './data/settings'
 import { languages, defaultLanguage } from './enums'
 import { titlesDom, editorsDom, statusBarDom, createElement, insertNthChild } from './dom'
 import { setCurrentTab } from './state'
+import { simpleHash } from './hash'
 
 export interface TabParams {
   readonly position?: number
@@ -40,7 +41,7 @@ export class Tab {
     this.id = Tab.id++
 
     // If no content was provided, the reference content is the provided one
-    this.originalContentHash = params.originalContentHash ?? Tab._hash(params.content)
+    this.originalContentHash = params.originalContentHash ?? simpleHash(params.content)
     this.originalContentLength = params.originalContentLength ?? params.content.length
 
     // Store update callback
@@ -303,7 +304,7 @@ export class Tab {
     // If this content must be set as the (new) original one...
     if (originalContent) {
       // Remember its hash
-      this.originalContentHash = Tab._hash(content)
+      this.originalContentHash = simpleHash(content)
       // Remember its length
       this.originalContentLength = content.length
     }
@@ -363,12 +364,4 @@ export class Tab {
   private static untitled = new List<number>()
   /** Tabs' paths' last part (see the "setPath" method) */
   private static openedPathsLastPart = new List<{ part: string; tab: Tab }>()
-
-  /**
-   * Hash a tab's content (used to check changes)
-   * @param content
-   */
-  private static _hash(content: string): string {
-    return crypto.createHash('sha1').update(content).digest('hex')
-  }
 }
