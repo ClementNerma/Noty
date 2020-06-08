@@ -19,12 +19,22 @@ export const actions = {
     })
   },
 
+  saveTab() {
+    currentTab.read().some((currentTab) => currentTab.save())
+  },
+
+  saveTabAs() {
+    currentTab.read().some((currentTab) => currentTab.saveAs())
+  },
+
   closeTab() {
     currentTab.read().match({
-      Some: (tab) => {
-        // TODO: Check if there are any unsaved changes before
+      Some: async (tab) => {
         const currentTabId = tabs.indexOf(tab)
-        tab.close()
+
+        if (!(await tab.close().promise()).unwrapOr(false)) {
+          return
+        }
 
         if (currentTabId < tabs.length - 1) {
           setCurrentTab(tabs.getUnwrap(currentTabId + 1))
@@ -41,10 +51,21 @@ export const actions = {
     })
   },
 
-  closeAllTabs() {
-    // TODO: Check if there are any unsaved changes before
-    tabs.out((tab) => tab.close())
+  async closeAllTabs(): Promise<boolean> {
+    const oldCurrentTab = currentTab.read()
+
+    for (const tab of tabs) {
+      setCurrentTab(tab)
+
+      if (!(await tab.close().promise()).unwrapOr(false)) {
+        oldCurrentTab.some(setCurrentTab)
+        return false
+      }
+    }
+
+    tabs.clear()
     currentTab.write(None())
+    return true
   },
 
   createTab() {
@@ -62,14 +83,22 @@ export const actions = {
         language: None(),
         content: '',
         onUpdate: onTabUpdate,
+        onClose: onTabClose,
         current: true,
       })
     )
   },
 
-  reload() {
-    // TODO: Save session before reloading
-    remote.getCurrentWindow().reload()
+  async exit() {
+    if (await actions.closeAllTabs()) {
+      exit()
+    }
+  },
+
+  async reload() {
+    if (await actions.closeAllTabs()) {
+      remote.getCurrentWindow().reload()
+    }
   },
 
   toggleDevTools() {

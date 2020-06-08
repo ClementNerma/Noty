@@ -34,10 +34,13 @@ export function defaultSettings(): Settings {
     keymaps: List.raw<KeyMapsEntry>([
       { ctrl: true, shift: true, alt: false, key: 'Tab', action: 'previousTab' },
       { ctrl: true, shift: false, alt: false, key: 'Tab', action: 'nextTab' },
+      { ctrl: true, shift: false, alt: false, key: 's', action: 'saveTab' },
+      { ctrl: true, shift: true, alt: false, key: 's', action: 'saveTabAs' },
       { ctrl: true, shift: false, alt: false, key: 'w', action: 'closeTab' },
       { ctrl: true, shift: true, alt: false, key: 'w', action: 'closeAllTabs' },
       { ctrl: true, shift: false, alt: false, key: 'n', action: 'createTab' },
       { ctrl: true, shift: false, alt: true, key: 'r', action: 'reload' },
+      { ctrl: true, shift: false, alt: false, key: 'q', action: 'exit' },
       { ctrl: false, shift: false, alt: false, key: 'F12', action: 'toggleDevTools' },
     ]),
   }
