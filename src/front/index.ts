@@ -1,4 +1,4 @@
-import './handle_panics'
+import './panics'
 
 import * as fs from 'fs'
 
