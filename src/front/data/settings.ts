@@ -4,6 +4,7 @@ import { actions } from '../actions'
 import { themes } from '../enums'
 
 export interface Settings {
+  autoSaveDelay: number
   editor: EditorSettings
   keymaps: List<KeyMapsEntry>
 }
@@ -25,6 +26,7 @@ export type KeyMapsEntry = {
 
 export function defaultSettings(): Settings {
   return {
+    autoSaveDelay: 500,
     editor: {
       fontFamily: '"Fira Code"',
       fontSize: 16,
@@ -74,7 +76,8 @@ const _keyMapsEntryDecoder: JsonDecoder<KeyMapsEntry> = j.mapped5([
 
 export const decodeSettings: Decoder<string, Settings> = d.then(
   j.parse,
-  j.mapped2([
+  j.mapped3([
+    ['autoSaveDelay', j.number],
     ['editor', _editorSettingsDecoder],
     ['keymaps', j.arrayOf(_keyMapsEntryDecoder)],
   ])

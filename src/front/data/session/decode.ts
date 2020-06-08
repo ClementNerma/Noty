@@ -2,33 +2,40 @@ import { Decoder, List, Option, Decoders as d, JsonDecoders as j } from 'typescr
 
 interface _SessionTab {
   readonly id: number
-  readonly language: Option<string>
-  readonly originalContentHash: string
-  readonly originalContentLength: number
   readonly path: Option<string>
+  readonly language: Option<string>
+  readonly originalContent: {
+    readonly hash: string
+    readonly length: number
+  }
 }
 
 export interface Session {
+  activeTab: Option<number>
   tabs: List<_SessionTab>
-  activeTab: number
 }
 
 export const decodeSession: Decoder<string, Session> = d.then(
   j.parse,
   j.mapped2([
+    ['activeTab', j.optional(j.number)],
+
     [
       'tabs',
       j.arrayOf(
-        j.mapped5([
+        j.mapped4([
           ['id', j.number],
           ['path', j.optional(j.string)],
           ['language', j.optional(j.string)],
-          ['originalContentHash', j.string],
-          ['originalContentLength', j.number],
+          [
+            'originalContent',
+            j.mapped2([
+              ['hash', j.string],
+              ['length', j.number],
+            ]),
+          ],
         ])
       ),
     ],
-
-    ['activeTab', j.number],
   ])
 )

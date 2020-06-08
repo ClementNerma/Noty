@@ -1,4 +1,4 @@
-import { Either, FailableFuture, Left, List, None, Option, Result, Right, Some, With, parallel } from 'typescript-core'
+import { Either, FailableFuture, Left, List, None, O, Option, Result, Right, Some, With, assert, parallel } from 'typescript-core'
 import { Settings, applySettings } from './data/settings'
 import { createElement, editorsDom, insertNthChild, statusBarDom, titlesDom } from './dom'
 import { defaultLanguage, languages } from './enums'
@@ -9,29 +9,38 @@ import { simpleHash } from './hash'
 import { writeFileUtf8 } from './data/fs'
 
 export interface TabParams {
+  readonly id?: number
   readonly position?: number
   readonly settings: Settings
   readonly path: Option<string>
   readonly language: Option<string>
-  readonly originalContentHash?: string
-  readonly originalContentLength?: number
+  readonly originalContent?: OriginalContent
   readonly current?: boolean
   readonly content: string
-  readonly onUpdate: (tab: Tab, content: string) => void
-  readonly onClose: (tab: Tab) => void
+  readonly onUpdate: (tab: Tab, content: string, cursor: CursorPosition) => void
+  readonly onClose: (tab: Tab, content: string, cursor: CursorPosition) => void
+}
+
+export interface CursorPosition {
+  readonly row: number
+  readonly column: number
+}
+
+export interface OriginalContent {
+  readonly length: number
+  readonly hash: string
 }
 
 export class Tab {
   public readonly id: number
-  private onUpdate: (tab: Tab, content: string) => void
-  private onClose: (tab: Tab) => void
+  private onUpdate: (tab: Tab, content: string, cursor: CursorPosition) => void
+  private onClose: (tab: Tab, content: string, cursor: CursorPosition) => void
   private titleDom: HTMLElement
   private titleNameDom: HTMLElement
   private titleCloseDom: HTMLElement
   private editorDom: HTMLElement
   private statusDom: HTMLElement
-  private originalContentHash: string
-  private originalContentLength: number
+  private originalContent: OriginalContent
   private path: Either<string, number>
   private language: With<Option<string>>
   private editor: AceAjax.Editor
@@ -41,11 +50,25 @@ export class Tab {
 
   constructor(params: TabParams) {
     // Generate a simple unique identifier
-    this.id = Tab.id++
+    if (params.id !== undefined) {
+      assert(!Tab.ids.includes(params.id), `Internal error: create two tabs with the same ID (${params.id})`)
+
+      if (params.id >= Tab.id) {
+        Tab.id = params.id
+      }
+
+      this.id = params.id
+    } else {
+      this.id = Tab.id++
+    }
+
+    Tab.ids.push(Tab.id)
 
     // If no content was provided, the reference content is the provided one
-    this.originalContentHash = params.originalContentHash ?? simpleHash(params.content)
-    this.originalContentLength = params.originalContentLength ?? params.content.length
+    this.originalContent = params.originalContent ?? {
+      hash: simpleHash(params.content),
+      length: params.content.length,
+    }
 
     // Store update callback
     this.onUpdate = params.onUpdate
@@ -132,7 +155,7 @@ export class Tab {
     parallel(() => this._updateTitleStatus())
 
     // Trigger the custom update callback provided during the tab's initialization
-    this.onUpdate(this, content)
+    this.onUpdate(this, content, this.getCursorPosition())
   }
 
   /**
@@ -265,8 +288,10 @@ export class Tab {
 
     return writeFileUtf8(this.path.left().expect("Internal error: called Tab's ._save() method but no path is set"), content)
       .map(() => {
-        this.originalContentHash = simpleHash(content)
-        this.originalContentLength = content.length
+        this.originalContent = {
+          hash: simpleHash(content),
+          length: content.length,
+        }
         this._updateTitleStatus()
       })
       .withErr((err) => errorDialog('Failed to save: ' + err.message))
@@ -305,7 +330,7 @@ export class Tab {
 
     // If the length changed since the last time, there was a change
     // This covers the vast majority of cases
-    if (content.length !== this.originalContentLength) {
+    if (content.length !== this.originalContent.length) {
       return true
     }
 
@@ -313,7 +338,7 @@ export class Tab {
     //  without removing the previous one first (e.g. selecting the content, and pasting the new one with the same length),
     //  we have to compare this content to the original one to check the differences
     // So we compute this content's hash and compare it to the original's one
-    else if (simpleHash(content) != this.originalContentHash) {
+    else if (simpleHash(content) != this.originalContent.hash) {
       return true
     }
 
@@ -321,6 +346,13 @@ export class Tab {
     else {
       return false
     }
+  }
+
+  /**
+   * Get this tab's original content's informations
+   */
+  getOriginalContentInfos(): OriginalContent {
+    return O.cloneSoft(this.originalContent)
   }
 
   /**
@@ -339,10 +371,11 @@ export class Tab {
   setContent(content: string, originalContent = false, skipUpdateCallback = false) {
     // If this content must be set as the (new) original one...
     if (originalContent) {
-      // Remember its hash
-      this.originalContentHash = simpleHash(content)
-      // Remember its length
-      this.originalContentLength = content.length
+      // Remember its hash and length
+      this.originalContent = {
+        hash: simpleHash(content),
+        length: content.length,
+      }
     }
 
     // Set the new content
@@ -350,6 +383,13 @@ export class Tab {
 
     // Run the update callback (if not asked to skip it)
     if (!skipUpdateCallback) this._onUpdate(content)
+  }
+
+  /**
+   * Get the cursor's position
+   */
+  getCursorPosition(): Readonly<{ row: number; column: number }> {
+    return this.editor.getCursorPosition()
   }
 
   /**
@@ -430,13 +470,14 @@ export class Tab {
             this.save()
               .inspectOk((saved) => {
                 if (saved) {
-                  this.onClose(this)
+                  this.onClose(this, this.getContent(), this.getCursorPosition())
                   this.destroy()
                 }
               })
               .then(complete),
+
           "Don't save": () => {
-            this.onClose(this)
+            this.onClose(this, this.getContent(), this.getCursorPosition())
             this.destroy()
           },
         })
@@ -462,6 +503,8 @@ export class Tab {
 
   /** Tabs ID counter */
   private static id = 0
+  /** Tabs ID list (used to ensure there aren't two tabs with the same ID) */
+  private static ids = new List<number>()
 
   /** Tabs' "untitled" numbers (see the "setPath" method) */
   private static untitled = new List<number>()

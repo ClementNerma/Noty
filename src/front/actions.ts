@@ -1,4 +1,4 @@
-import { currentTab, exit, onTabClose, onTabUpdate, setCurrentTab, settings, tabs } from './state'
+import { currentTab, exit, onTabClose, onTabUpdate, saveCompleteState, setCurrentTab, settings, tabs } from './state'
 
 import { None } from 'typescript-core'
 import { Tab } from './tab'
@@ -89,16 +89,12 @@ export const actions = {
     )
   },
 
-  async exit() {
-    if (await actions.closeAllTabs()) {
-      exit()
-    }
+  exit() {
+    saveCompleteState().withOk(exit)
   },
 
-  async reload() {
-    if (await actions.closeAllTabs()) {
-      remote.getCurrentWindow().reload()
-    }
+  reload() {
+    saveCompleteState().withOk(() => remote.getCurrentWindow().reload())
   },
 
   toggleDevTools() {

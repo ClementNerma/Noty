@@ -39,13 +39,13 @@ loadSession().map(([session, saved]) => {
     )
   }
 
-  newTabs
-    .get(session.activeTab)
-    .some(setCurrentTab)
-    .none(() => {
-      eprintln('Loaded session contains {} tabs but active tab index is {}.', newTabs.length, session.activeTab)
-      newTabs.first().some(setCurrentTab)
+  const activeTab = session.activeTab.andThen((activeTabIndex) =>
+    newTabs.get(activeTabIndex).none(() => {
+      eprintln('Loaded session contains {} tabs but active tab index is {}.', newTabs.length, activeTabIndex)
     })
+  )
+
+  activeTab.some(setCurrentTab).none(() => newTabs.first().some(setCurrentTab))
 
   tabs.push(...newTabs)
 })

@@ -20,17 +20,16 @@ export function encodeSession(session: Session): string {
   let stringifyable: _ToNative<Session>
 
   stringifyable = {
+    activeTab: session.activeTab.toNullable(),
+
     tabs: session.tabs
       .map((tab) => ({
         id: tab.id,
         language: tab.language.toNullable(),
-        originalContentHash: tab.originalContentHash,
-        originalContentLength: tab.originalContentLength,
+        originalContent: tab.originalContent,
         path: tab.path.toNullable(),
       }))
       .toArray(),
-
-    activeTab: session.activeTab,
   }
 
   return JSON.stringify(stringifyable, null, 2)
