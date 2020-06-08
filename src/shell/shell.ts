@@ -16,6 +16,17 @@ function fail(errorMessage: string, details?: string): never {
     detail: details,
   })
 
+  console.error('ERROR: ' + errorMessage)
+
+  if (details !== undefined) {
+    console.error(
+      details
+        .split('\n')
+        .map((line) => '> ' + line)
+        .join('\n')
+    )
+  }
+
   process.exit(1)
 }
 
