@@ -1,22 +1,14 @@
-import { List, Option, None, Some, Ref, MaybeUninit } from 'typescript-core'
-import { Tab } from './tab'
-import { remote } from 'electron'
+import { List, MaybeUninit, None, Option, Ref, Some } from 'typescript-core'
+
 import { Settings } from './data/settings'
+import { Tab } from './tab'
+import { errorDialog } from './dialogs'
+import { remote } from 'electron'
 
 export function fail(errorMessage: string, internal = false): never {
-  error(errorMessage, internal)
+  errorDialog(errorMessage, internal)
   remote.app.exit(1)
   throw new Error(errorMessage)
-}
-
-export function error(errorMessage: string, internal = false) {
-  remote.dialog.showMessageBoxSync({
-    type: 'error',
-    buttons: ['OK'],
-    defaultId: 0,
-    title: 'Noty error',
-    message: (internal ? 'Internal error: ' : '') + errorMessage,
-  })
 }
 
 export function exit() {
