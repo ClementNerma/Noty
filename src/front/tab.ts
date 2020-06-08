@@ -63,7 +63,7 @@ export class Tab {
       this.id = Tab.id++
     }
 
-    Tab.ids.push(Tab.id)
+    Tab.ids.push(this.id)
 
     // If no content was provided, the reference content is the provided one
     this.originalContent = params.originalContent ?? {
