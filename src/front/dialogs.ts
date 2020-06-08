@@ -1,4 +1,4 @@
-import { Enum, None, O, Option, Some, assert, enumStr, forceType } from 'typescript-core'
+import { Enum, List, None, O, Option, Some, assert, enumStr, forceType } from 'typescript-core'
 
 import { remote } from 'electron'
 
@@ -21,7 +21,9 @@ export async function choiceDialog<K extends string>(message: string, choices: K
     message,
   })
 
-  return O.getArr(choices, ret.response).map((choice) => enumStr(choice))
+  return List.raw(choices)
+    .get(ret.response)
+    .map((choice) => enumStr(choice))
 }
 
 export function cancellableChoiceDialog<K extends string>(message: string, choices: K[], cancelChoice: K): Enum<K> {
@@ -35,7 +37,7 @@ export function cancellableChoiceDialog<K extends string>(message: string, choic
     message,
   })
 
-  return enumStr(O.getArr(choices, res).unwrap())
+  return enumStr(List.raw(choices).get(res).unwrap())
 }
 
 export async function optCancellableChoiceDialog<K extends string, C extends K>(
@@ -53,9 +55,9 @@ export async function optCancellableChoiceDialog<K extends string, C extends K>(
     message,
   })
 
-  const chosen = O.getArr(choices, ret.response).unwrap()
+  const chosen = List.raw(choices).get(ret.response).unwrap()
 
-  return chosen === cancelChoice ? None() : forceType(Some(enumStr(O.getArr(choices, ret.response).unwrap())))
+  return chosen === cancelChoice ? None() : forceType(Some(enumStr(List.raw(choices).get(ret.response).unwrap())))
 }
 
 export async function saveAsDialog(defaultPath?: string): Promise<Option<string>> {

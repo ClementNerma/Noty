@@ -609,10 +609,10 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-typescript-core@^2.0.6:
-  version "2.0.6"
-  resolved "https://registry.yarnpkg.com/typescript-core/-/typescript-core-2.0.6.tgz#67f4e358b72fd6b17f9284316f059028111f0caa"
-  integrity sha512-QqCsLcF4zK4KSe/STZFtgchwijZNuU2NRKHDvRzPfDbydM8OT8VpQhzYcwPw7hqpxUdjV+ws+axyRaKD4i92KQ==
+typescript-core@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/typescript-core/-/typescript-core-2.1.1.tgz#ac298d6284eb08234e0749780b4a396d1a92ab47"
+  integrity sha512-dExky92ANHhlnWFcOF6F01cYiLLMp2zUqsZDh/Zzx2qHuPTNcZyDA7Qj4xOHa3HUMTesjeW7dWWk3E0Gz98rDg==
 
 typescript@^3.9.3:
   version "3.9.3"
