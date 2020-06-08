@@ -3,6 +3,7 @@ import './panics'
 import * as fs from 'fs'
 
 import { List, eprintln } from 'typescript-core'
+import { appDom, dragOverlay } from './dom'
 import { dataInit, saveSettings } from './data/fs'
 import { decodeSettings, defaultSettings } from './data/settings'
 import { fail, onTabClose, onTabUpdate, setCurrentTab, settings, tabs } from './state'
@@ -10,7 +11,6 @@ import { invalidatedSettingsPath, settingsPath } from './data/paths'
 
 import { Tab } from './tab'
 import { actions } from './actions'
-import { dragOverlay } from './dom'
 import { errorDialog } from './dialogs'
 import { loadSession } from './data/session/load'
 
@@ -85,6 +85,13 @@ window.addEventListener('keydown', (event) => {
     }
   }
   return
+})
+
+// Open a new tab when double-clicking on the empty window
+appDom.addEventListener('dblclick', () => {
+  if (tabs.empty()) {
+    actions.createTab()
+  }
 })
 
 // Finished loading
