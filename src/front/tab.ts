@@ -52,7 +52,7 @@ export class Tab {
   constructor(params: TabParams) {
     // Generate a simple unique identifier
     if (params.id !== undefined) {
-      assert(!Tab.ids.includes(params.id), `Internal error: create two tabs with the same ID (${params.id})`)
+      assert(!Tab.ids.includes(params.id), `Internal error: cannot create two tabs with the same ID (${params.id})`)
 
       if (params.id >= Tab.id) {
         Tab.id = params.id
