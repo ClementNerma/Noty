@@ -1,4 +1,5 @@
-import { assert, List } from 'typescript-core'
+import { List, assert } from 'typescript-core'
+
 import { aceBundleModes } from './libs/ace.js/ace-bundle-languages'
 
 export const languages = new List(aceBundleModes)

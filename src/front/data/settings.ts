@@ -1,6 +1,7 @@
-import { Decoder, Decoders as d, JsonDecoders as j, List, Option, JsonDecoder, JsonValue, proxies, O } from 'typescript-core'
-import { themes } from '../enums'
+import { Decoder, JsonDecoder, JsonValue, List, O, Option, Decoders as d, JsonDecoders as j, proxies } from 'typescript-core'
+
 import { actions } from '../actions'
+import { themes } from '../enums'
 
 export interface Settings {
   editor: EditorSettings

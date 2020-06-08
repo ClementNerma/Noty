@@ -1,7 +1,8 @@
-import { remote } from 'electron'
+import { currentTab, exit, onTabClose, onTabUpdate, setCurrentTab, settings, tabs } from './state'
+
 import { None } from 'typescript-core'
-import { currentTab, tabs, setCurrentTab, exit, settings, onTabUpdate } from './state'
 import { Tab } from './tab'
+import { remote } from 'electron'
 
 export const actions = {
   previousTab() {

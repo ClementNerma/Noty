@@ -1,10 +1,12 @@
-import { With, Option, None, Result, parallel, List, Some } from 'typescript-core'
-import * as crypto from 'crypto'
-import { applySettings, Settings } from './data/settings'
-import { languages, defaultLanguage } from './enums'
-import { titlesDom, editorsDom, statusBarDom, createElement, insertNthChild } from './dom'
+import { Either, FailableFuture, Left, List, None, Option, Result, Right, Some, With, parallel } from 'typescript-core'
+import { Settings, applySettings } from './data/settings'
+import { createElement, editorsDom, insertNthChild, statusBarDom, titlesDom } from './dom'
+import { defaultLanguage, languages } from './enums'
+import { errorDialog, optCancellableChoiceDialog, saveAsDialog } from './dialogs'
+
 import { setCurrentTab } from './state'
 import { simpleHash } from './hash'
+import { writeFileUtf8 } from './data/fs'
 
 export interface TabParams {
   readonly position?: number
