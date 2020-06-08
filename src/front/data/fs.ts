@@ -1,14 +1,16 @@
 import * as fs from 'fs'
-import * as path from 'path'
-import { appDataPath, settingsPath, sessionPath, invalidatedSessionPath } from './paths'
-import { encodeSettings, defaultSettings, Settings } from './settings'
-import { Option, None, Some } from 'typescript-core'
-import { decodeSession, Session } from './session'
-import { error } from '../state'
+
+import { Err, Ok, Result } from 'typescript-core'
+import { Settings, defaultSettings, encodeSettings } from './settings'
+import { appDataPath, savedPath, settingsPath } from './paths'
 
 export function dataInit() {
   if (!fs.existsSync(appDataPath)) {
     fs.mkdirSync(appDataPath)
+  }
+
+  if (!fs.existsSync(savedPath)) {
+    fs.mkdirSync(savedPath)
   }
 
   if (!fs.existsSync(settingsPath)) {
@@ -20,16 +22,22 @@ export function saveSettings(settings: Settings) {
   fs.writeFileSync(settingsPath, encodeSettings(settings))
 }
 
-export function loadSession(): Option<Session> {
-  if (!fs.existsSync(sessionPath)) {
-    return None()
+export function writeFileUtf8(path: string, content: string): Result<void, Error> {
+  try {
+    fs.writeFileSync(path, content, 'utf8')
+  } catch (e) {
+    return Err(e)
   }
 
-  return decodeSession(fs.readFileSync(sessionPath, 'utf8'))
-    .map((session) => Some(session))
-    .unwrapOrElse((err) => {
-      error('Cannot recover invalid session, creating empty session instead.\nReason:\n' + err.render())
-      fs.renameSync(sessionPath, invalidatedSessionPath)
-      return None()
-    })
+  return Ok(undefined)
+}
+
+export function removeFile(path: string): Result<void, Error> {
+  try {
+    fs.unlinkSync(path)
+  } catch (e) {
+    return Err(e)
+  }
+
+  return Ok(undefined)
 }
