@@ -14,6 +14,7 @@ export interface EditorSettings {
   fontSize: number
   tabSize: number
   theme: string
+  showPrintMargin: boolean
 }
 
 export type KeyMapsEntry = {
@@ -32,6 +33,7 @@ export function defaultSettings(): Settings {
       fontSize: 16,
       tabSize: 4,
       theme: 'one_dark',
+      showPrintMargin: false,
     },
     keymaps: List.raw<KeyMapsEntry>([
       { ctrl: true, shift: true, alt: false, key: 'Tab', action: 'previousTab' },
@@ -51,6 +53,7 @@ export function defaultSettings(): Settings {
 
 export function applySettings(editor: AceAjax.Editor, editorDom: HTMLElement, settings: Settings) {
   editor.setTheme('ace/theme/' + (settings.editor.theme in themes ? settings.editor.theme : 'one_dark'))
+  editor.setShowPrintMargin(settings.editor.showPrintMargin)
   editorDom.style.fontFamily = settings.editor.fontFamily
   editorDom.style.fontSize = settings.editor.fontSize.toString() + 'px'
   editorDom.style.tabSize = settings.editor.tabSize.toString()
@@ -60,11 +63,12 @@ export function encodeSettings(settings: Settings): string {
   return new JsonValue(settings as any).stringify(4)
 }
 
-const _editorSettingsDecoder: JsonDecoder<EditorSettings> = j.mapped4([
+const _editorSettingsDecoder: JsonDecoder<EditorSettings> = j.mapped5([
   ['theme', j.string],
   ['fontFamily', j.string],
   ['fontSize', j.number],
   ['tabSize', j.number],
+  ['showPrintMargin', j.boolean],
 ])
 
 const _keyMapsEntryDecoder: JsonDecoder<KeyMapsEntry> = j.mapped5([
