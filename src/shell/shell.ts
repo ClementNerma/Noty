@@ -137,7 +137,7 @@ function createWindow() {
 function showWindow() {
   if (mainWindow) {
     const dims = screen.getPrimaryDisplay().workAreaSize
-    //mainWindow.setSize(Math.max(Math.floor(dims.width / 3), 320), 56)
+    mainWindow.setSize(Math.floor(dims.width / 2), Math.floor(dims.height / 2))
     mainWindow.center()
     mainWindow.show()
     mainWindow.focus()
