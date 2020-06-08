@@ -1,13 +1,18 @@
 import './handle_panics'
+
 import * as fs from 'fs'
+
 import { List, eprintln } from 'typescript-core'
-import { dataInit, loadSession, saveSettings } from './data/fs'
+import { dataInit, saveSettings } from './data/fs'
 import { decodeSettings, defaultSettings } from './data/settings'
-import { settingsPath, invalidatedSettingsPath } from './data/paths'
+import { fail, onTabClose, onTabUpdate, setCurrentTab, settings, tabs } from './state'
+import { invalidatedSettingsPath, settingsPath } from './data/paths'
+
 import { Tab } from './tab'
 import { actions } from './actions'
-import { fail, error, onTabUpdate, setCurrentTab, tabs, settings } from './state'
 import { dragOverlay } from './dom'
+import { errorDialog } from './dialogs'
+import { loadSession } from './data/session/load'
 
 // Must be run at startup
 dataInit()
@@ -15,7 +20,7 @@ dataInit()
 // Load settings
 settings.init(
   decodeSettings(fs.readFileSync(settingsPath, 'utf8')).unwrapOrElse((err) => {
-    error('Failed to decode settings file, falling back to default settings instead.\nReason:\n' + err.render())
+    errorDialog('Failed to decode settings file, falling back to default settings instead.\nReason:\n' + err.render())
     fs.renameSync(settingsPath, invalidatedSettingsPath)
 
     const settings = defaultSettings()
@@ -25,11 +30,13 @@ settings.init(
 )
 
 // Restore previous session
-loadSession().map((session) => {
+loadSession().map(([session, saved]) => {
   const newTabs = new List<Tab>()
 
-  for (const editor of session.tabs) {
-    newTabs.push(new Tab({ settings: settings.unwrap(), ...editor, onUpdate: onTabUpdate }))
+  for (const tab of session.tabs) {
+    newTabs.push(
+      new Tab({ settings: settings.unwrap(), ...tab, content: saved.get(tab.id).unwrapOr(''), onUpdate: onTabUpdate, onClose: onTabClose })
+    )
   }
 
   newTabs

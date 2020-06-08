@@ -1,4 +1,5 @@
 import * as path from 'path'
+
 import { remote } from 'electron'
 
 export const appDataPath = path.join(remote.app.getPath('home'), '.noty')
@@ -8,3 +9,5 @@ export const invalidatedSettingsPath = path.join(appDataPath, '_INVALIDATED_.set
 
 export const sessionPath = path.join(appDataPath, 'session.json')
 export const invalidatedSessionPath = path.join(appDataPath, '_INVALIDATED_.session.json')
+
+export const savedPath = path.join(appDataPath, 'saved')
