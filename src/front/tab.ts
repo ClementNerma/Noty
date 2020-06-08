@@ -459,7 +459,13 @@ export class Tab {
    * Close the tab (asks to save if there are changes)
    */
   close(): FailableFuture<boolean, Error> {
-    return new FailableFuture(async (resolve, __, complete) => {
+    return new FailableFuture(async (resolve, reject) => {
+      const close = () => {
+        this.onClose(this, this.getContent(), this.getCursorPosition())
+        this.destroy()
+        resolve(true)
+      }
+
       if (this.hasChanges()) {
         const choice = await optCancellableChoiceDialog(
           'You have unsaved changes, do you want to save them?',
@@ -474,21 +480,13 @@ export class Tab {
         choice.unwrap().match<void>({
           Save: () =>
             this.save()
-              .inspectOk((saved) => {
-                if (saved) {
-                  this.onClose(this, this.getContent(), this.getCursorPosition())
-                  this.destroy()
-                }
-              })
-              .then(complete),
+              .success((saved) => saved && close())
+              .catch(reject),
 
-          "Don't save": () => {
-            this.onClose(this, this.getContent(), this.getCursorPosition())
-            this.destroy()
-          },
+          "Don't save": () => close(),
         })
       } else {
-        resolve(true)
+        close()
       }
     })
   }

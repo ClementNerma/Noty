@@ -41,6 +41,10 @@ export const actions = {
         } else if (currentTabId > 0) {
           setCurrentTab(tabs.getUnwrap(currentTabId - 1))
         } else {
+          for (const tab of tabs) {
+            tab.setActive(false)
+          }
+
           currentTab.write(None())
         }
 
