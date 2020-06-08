@@ -1,8 +1,9 @@
-import { currentTab, onTabClose, onTabUpdate, saveCompleteState, setCurrentTab, settings, tabs } from './state'
+import { currentTab, onTabClose, onTabUpdate, saveCompleteState, setCurrentTab, settings, tabs, saveUpdatedSession } from './state'
 
 import { None } from 'typescript-core'
 import { Tab } from './tab'
 import { remote } from 'electron'
+import { saveUnsaved } from './data/session/save'
 
 export const actions = {
   previousTab() {
@@ -78,19 +79,21 @@ export const actions = {
       .map((tab) => tabs.indexOf(tab) + 1)
       .unwrapOr(0)
 
-    tabs.insert(
+    const tab = new Tab({
+      settings: settings.expect('Could not create a tab before settings were loaded'),
       position,
-      new Tab({
-        settings: settings.expect('Could not create a tab before settings were loaded'),
-        position,
-        path: None(),
-        language: None(),
-        content: '',
-        onUpdate: onTabUpdate,
-        onClose: onTabClose,
-        current: true,
-      })
-    )
+      path: None(),
+      language: None(),
+      content: '',
+      onUpdate: onTabUpdate,
+      onClose: onTabClose,
+      current: true,
+    })
+
+    tabs.insert(position, tab)
+
+    saveUpdatedSession()
+    saveUnsaved(tab.id, '')
   },
 
   exit() {
