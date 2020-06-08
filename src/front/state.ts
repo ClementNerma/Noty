@@ -42,3 +42,9 @@ export function onTabUpdate(tab: Tab, content: string) {
   // TODO: Save after a delay
   console.log('update', { id: tab.id, content })
 }
+
+// Handle tab closing
+export function onTabClose(tab: Tab) {
+  // TODO: Remove saved file
+  console.log('closed', { id: tab.id })
+}

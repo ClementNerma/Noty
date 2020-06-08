@@ -18,11 +18,13 @@ export interface TabParams {
   readonly current?: boolean
   readonly content: string
   readonly onUpdate: (tab: Tab, content: string) => void
+  readonly onClose: (tab: Tab) => void
 }
 
 export class Tab {
   public readonly id: number
   private onUpdate: (tab: Tab, content: string) => void
+  private onClose: (tab: Tab) => void
   private titleDom: HTMLElement
   private titleNameDom: HTMLElement
   private titleCloseDom: HTMLElement
@@ -30,13 +32,12 @@ export class Tab {
   private statusDom: HTMLElement
   private originalContentHash: string
   private originalContentLength: number
-  private path: Option<string>
+  private path: Either<string, number>
   private language: With<Option<string>>
   private editor: AceAjax.Editor
 
   private previousContent: string
   private previousContentLength: number
-  private untitled: Option<number> = None()
 
   constructor(params: TabParams) {
     // Generate a simple unique identifier
@@ -48,6 +49,7 @@ export class Tab {
 
     // Store update callback
     this.onUpdate = params.onUpdate
+    this.onClose = params.onClose
 
     // Prepare the tab's title element
     this.titleDom = createElement('span', { ['data-id']: this.id })
@@ -89,7 +91,7 @@ export class Tab {
     this.setContent(params.content, false, true)
 
     // Indicate if there is any change compared to the original content
-    this._updateTitleStatus(params.content)
+    this._updateTitleStatus()
 
     // Set an initial status
     this._setStatus(`/* TODO*/ Current tab: ${this.id}`)
@@ -127,7 +129,7 @@ export class Tab {
   private _onUpdate(content: string) {
     // Update the title status
     // As this involves computing a checksum that can be quite large in some scenarios, we run it in parallel
-    parallel(() => this._updateTitleStatus(content))
+    parallel(() => this._updateTitleStatus())
 
     // Trigger the custom update callback provided during the tab's initialization
     this.onUpdate(this, content)
@@ -137,25 +139,16 @@ export class Tab {
    * Update the title status (indicating if changes occurred compared to the original content) after a change in the editor
    * @param content The new content
    */
-  private _updateTitleStatus(content: string) {
+  private _updateTitleStatus(status?: boolean) {
     const classList = this.titleDom.classList
 
-    // If the length changed since the last time, there was a change
-    // This covers the vast majority of cases
-    if (content.length !== this.originalContentLength) {
+    if (status) {
       classList.add('changes')
-    }
-
-    // In the specific case where the user would have replaced a portion of the content by another of the exact same length,
-    //  without removing the previous one first (e.g. selecting the content, and pasting the new one with the same length),
-    //  we have to compare this content to the original one to check the differences
-    // So we compute this content's hash and compare it to the original's one
-    else if (Tab._hash(content) != this.originalContentHash) {
+    } else if (status === false) {
+      classList.remove('changes')
+    } else if (this.hasChanges()) {
       classList.add('changes')
-    }
-
-    // If the hashes are equal, then there are no changes
-    else {
+    } else {
       classList.remove('changes')
     }
   }
@@ -172,7 +165,7 @@ export class Tab {
    * Get the path of the file opened in this tab (if any)
    */
   getPath(): Option<string> {
-    return this.path.clone()
+    return this.path.left()
   }
 
   /**
@@ -180,16 +173,14 @@ export class Tab {
    * @param path
    */
   setPath(path: Option<string>) {
-    this.path = path.clone()
-
     // Update the title name
     this.titleNameDom.innerText = path.match({
       // This tab is not linked to any file
       None: () => {
         // ---------------------------------------------------- //
         // Should never be reached, but it's here just in case //
-        if (this.untitled.isSome()) {
-          return 'Untitled-' + this.untitled.unwrap()
+        if (this.path?.isRight()) {
+          return 'Untitled-' + this.path.right().unwrap()
         }
         // ---------------------------------------------------- //
 
@@ -208,7 +199,7 @@ export class Tab {
         Tab.untitled.push(untitled)
 
         // We remember this tab as an untitled number (used above and to cleanup in ".close()")
-        this.untitled = Some(untitled)
+        this.path = Right(untitled)
 
         // Return the tab's name
         return 'Untitled-' + untitled.toString()
@@ -224,7 +215,8 @@ export class Tab {
         const lastPart = parts[parts.length - 1]
 
         // Remove this tab's "untitled" number, if it had one
-        this.untitled.take().map((untitled) => Tab.untitled.remove(untitled))
+        this.path && this.path.withRight((untitled) => Tab.untitled.remove(untitled))
+        this.path = Left(path)
 
         // Register this tab's file's last part (see below)
         Tab.openedPathsLastPart.push({ part: lastPart, tab: this })
@@ -260,9 +252,24 @@ export class Tab {
    * Only called by another tab to indicate this tab must use its file's full path as a title in order to avoid duplicate titles
    */
   private _useFullPathTitle() {
-    this.titleNameDom.innerText = this.path.expect(
-      'Internal error: tab was aked to use its full path as a title, but this tab is not linked to a file'
-    )
+    this.titleNameDom.innerText = this.path
+      .left()
+      .expect('Internal error: tab was aked to use its full path as a title, but this tab is not linked to a file')
+  }
+
+  /**
+   * Save changes when path is defined
+   */
+  private _save(): Result<void, Error> {
+    const content = this.getContent()
+
+    return writeFileUtf8(this.path.left().expect("Internal error: called Tab's ._save() method but no path is set"), content)
+      .map(() => {
+        this.originalContentHash = simpleHash(content)
+        this.originalContentLength = content.length
+        this._updateTitleStatus()
+      })
+      .withErr((err) => errorDialog('Failed to save: ' + err.message))
   }
 
   /**
@@ -287,6 +294,33 @@ export class Tab {
         console.warn(`Cannot use unsupported language "${language.unwrapOr('<None>')}", falling back to "${defaultLanguage}".`)
         this.editor.session.setMode('ace/mode/' + defaultLanguage)
       })
+  }
+
+  /**
+   * Check if the content of this tab changed compared to its original content
+   */
+  hasChanges(): boolean {
+    // Get the current content
+    const content = this.getContent()
+
+    // If the length changed since the last time, there was a change
+    // This covers the vast majority of cases
+    if (content.length !== this.originalContentLength) {
+      return true
+    }
+
+    // In the specific case where the user would have replaced a portion of the content by another of the exact same length,
+    //  without removing the previous one first (e.g. selecting the content, and pasting the new one with the same length),
+    //  we have to compare this content to the original one to check the differences
+    // So we compute this content's hash and compare it to the original's one
+    else if (simpleHash(content) != this.originalContentHash) {
+      return true
+    }
+
+    // If the hashes are equal, then there are no changes
+    else {
+      return false
+    }
   }
 
   /**
@@ -319,6 +353,35 @@ export class Tab {
   }
 
   /**
+   * Save the tab's content
+   */
+  save(): FailableFuture<boolean, Error> {
+    return new FailableFuture((_, __, complete) => {
+      this.path.match<void>({
+        Left: () => complete(this._save().map(() => true)),
+        Right: () => this.saveAs().then(complete),
+      })
+    })
+  }
+
+  /**
+   * Save the tab's content under another name
+   */
+  saveAs(): FailableFuture<boolean, Error> {
+    return new FailableFuture(async (resolve, __, complete) => {
+      const target = await saveAsDialog()
+
+      target.match({
+        None: () => resolve(false),
+        Some: (path) => {
+          this.setPath(Some(path))
+          complete(this._save().map(() => true))
+        },
+      })
+    })
+  }
+
+  /**
    * Apply changes made to the global settings to this tab
    * @param settings
    */
@@ -347,11 +410,49 @@ export class Tab {
   }
 
   /**
-   * Close the tab
+   * Close the tab (asks to save if there are changes)
    */
-  close() {
-    this.untitled.map((untitled) => Tab.untitled.remove(untitled))
+  close(): FailableFuture<boolean, Error> {
+    return new FailableFuture(async (resolve, __, complete) => {
+      if (this.hasChanges()) {
+        const choice = await optCancellableChoiceDialog(
+          'You have unsaved changes, do you want to save them?',
+          ['Save', "Don't save", 'Cancel'],
+          'Cancel'
+        )
+
+        if (choice.isNone()) {
+          return resolve(false)
+        }
+
+        choice.unwrap().match<void>({
+          Save: () =>
+            this.save()
+              .inspectOk((saved) => {
+                if (saved) {
+                  this.onClose(this)
+                  this.destroy()
+                }
+              })
+              .then(complete),
+          "Don't save": () => {
+            this.onClose(this)
+            this.destroy()
+          },
+        })
+      } else {
+        resolve(true)
+      }
+    })
+  }
+
+  /**
+   * Destroy the tab (ignores changes)
+   */
+  destroy() {
+    this.path.right().map((untitled) => Tab.untitled.remove(untitled))
     Tab.openedPathsLastPart.removeWith((value) => value.tab === this)
+
     this.editor.destroy()
 
     this.titleDom.remove()
