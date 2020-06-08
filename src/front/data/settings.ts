@@ -43,6 +43,7 @@ export function defaultSettings(): Settings {
       { ctrl: true, shift: false, alt: false, key: 'n', action: 'createTab' },
       { ctrl: true, shift: false, alt: true, key: 'r', action: 'reload' },
       { ctrl: true, shift: false, alt: false, key: 'q', action: 'exit' },
+      { ctrl: true, shift: true, alt: false, key: 'Q', action: 'exitCompletely' },
       { ctrl: false, shift: false, alt: false, key: 'F12', action: 'toggleDevTools' },
     ]),
   }

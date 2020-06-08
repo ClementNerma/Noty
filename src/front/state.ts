@@ -12,10 +12,6 @@ export function fail(errorMessage: string, internal = false): never {
   throw new Error(errorMessage)
 }
 
-export function exit() {
-  remote.app.exit()
-}
-
 // Settings
 export const settings = new MaybeUninit<Settings>()
 

@@ -1,4 +1,4 @@
-import { currentTab, exit, onTabClose, onTabUpdate, saveCompleteState, setCurrentTab, settings, tabs } from './state'
+import { currentTab, onTabClose, onTabUpdate, saveCompleteState, setCurrentTab, settings, tabs } from './state'
 
 import { None } from 'typescript-core'
 import { Tab } from './tab'
@@ -47,7 +47,7 @@ export const actions = {
         tabs.remove(tab)
       },
 
-      None: () => exit(),
+      None: () => actions.exit(),
     })
   },
 
@@ -90,7 +90,11 @@ export const actions = {
   },
 
   exit() {
-    saveCompleteState().withOk(exit)
+    saveCompleteState().withOk(() => remote.getCurrentWindow().close())
+  },
+
+  exitCompletely() {
+    saveCompleteState().withOk(() => remote.app.exit(0))
   },
 
   reload() {
