@@ -27,7 +27,7 @@ export function loadSession(): Option<[Session, Dictionary<number, string>]> {
       const filePath = path.join(savedPath, tab.id.toString())
 
       if (!fs.existsSync(filePath)) {
-        errorDialog("Session references tab with path '' but saved file does not exist.\nRemoving this tab instead.")
+        errorDialog(`A tab's data is missing from the previous session.\nRemoving this tab instead.`)
         session.tabs.remove(tab)
         continue
       }
