@@ -1,10 +1,16 @@
+:root {
+  --primary-100: #282c34;
+  --primary-300: #21252b;
+  --primary-600: #323842;
+}
+
 html,
 body {
   height: 100%;
-  background-color: #282c34;
+  background-color: var(--primary-100);
   padding: 0;
   margin: 0;
-  color: white;
+  color: #ffffff;
   font-family: 'Nimbus Sans L';
   font-size: 15px;
 }
@@ -18,7 +24,7 @@ body.loading #loading-overlay {
   z-index: 9998;
 
   /* NOTE: Must be the same as the window's background color set in the shell! */
-  background-color: #282c34;
+  background-color: var(--primary-100);
 }
 
 body:not(.loading) #loading-overlay {
@@ -76,7 +82,7 @@ body:not(.loading) #loading-overlay {
 
 #titles {
   display: block;
-  background-color: #21252b;
+  background-color: var(--primary-300);
   padding-left: 5px;
   padding-right: 5px;
   -webkit-app-region: drag;
@@ -94,11 +100,11 @@ body:not(.loading) #loading-overlay {
 }
 
 #titles > *:hover {
-  background-color: #323842;
+  background-color: var(--primary-600);
 }
 
 #titles > .active {
-  background-color: #282c34;
+  background-color: var(--primary-100);
 }
 
 #titles > * > .close {
@@ -138,7 +144,7 @@ body:not(.loading) #loading-overlay {
 /* Statuses */
 
 #statusbar {
-  background-color: #21252b;
+  background-color: var(--primary-300);
 }
 
 #statusbar > * {
