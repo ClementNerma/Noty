@@ -4,14 +4,23 @@ export function q(selector: string): Option<Element> {
   return Option.nullable(document.querySelector(selector))
 }
 
-export function createElement(tag: string, attributes: Collection<string | number | boolean>, innerHTML = ''): HTMLElement {
+export function createElement(
+  tag: string,
+  attributes: Collection<string | number | boolean>,
+  innerText = '',
+  events: Collection<(event: Event) => void> = {}
+): HTMLElement {
   const el = document.createElement(tag)
 
   for (const [attr, value] of O.entries(attributes)) {
     el.setAttribute(attr, value.toString())
   }
 
-  el.innerHTML = innerHTML
+  for (const [eventName, callback] of O.entries(events)) {
+    el.addEventListener(eventName, callback)
+  }
+
+  el.innerText = innerText
 
   return el
 }
@@ -24,9 +33,12 @@ export function insertNthChild(child: Element, parent: Element, nth: number) {
   }
 }
 
+const _expectDOM = (id: string) => q('#' + id).expect(`Failed to get DOM element with ID "${id}"`)
+
 // Get important DOM elements
-export const appDom = q('#app').expect('Failed to get element "#app"')
-export const titlesDom = q('#titles').expect('Failed to get element "#titles"')
-export const editorsDom = q('#editors').expect('Failed to get element "#editors"')
-export const statusBarDom = q('#statusbar').expect('Failed to get element "#statusbar"')
-export const dragOverlay = q('#drag-overlay').expect("Could not get element '#drag-overlay'")
+export const appDom = _expectDOM('app')
+export const titlesDom = _expectDOM('titles')
+export const editorsDom = _expectDOM('editors')
+export const statusBarDom = _expectDOM('statusbar')
+export const dragOverlay = _expectDOM('drag-overlay')
+export const languagesOverlay = _expectDOM('languages-overlay')
