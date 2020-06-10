@@ -2,17 +2,19 @@ import './panics'
 
 import * as fs from 'fs'
 
-import { List, eprintln } from 'typescript-core'
-import { appDom, dragOverlay } from './dom'
+import { List, eprintln, Some } from 'typescript-core'
+import { appDom, languagesOverlay, createElement } from './dom'
 import { dataInit, saveSettings } from './data/fs'
 import { decodeSettings, defaultSettings } from './data/settings'
-import { fail, onTabClose, onTabUpdate, setCurrentTab, settings, tabs } from './state'
+import { onTabClose, onTabUpdate, setCurrentTab, settings, tabs, currentTab } from './state'
 import { invalidatedSettingsPath, settingsPath } from './data/paths'
 
 import { Tab } from './tab'
 import { actions } from './actions'
 import { errorDialog } from './dialogs'
 import { loadSession } from './data/session/load'
+import { languages } from './enums'
+import { initKeyboardShortcuts } from './keyboard'
 
 // Must be run at startup
 dataInit()
@@ -50,42 +52,8 @@ loadSession().map(([session, saved]) => {
   tabs.push(...newTabs)
 })
 
-// Make the frameless window draggable
-window.addEventListener('keydown', (event) => {
-  if (!event.ctrlKey && !event.shiftKey && event.altKey) {
-    dragOverlay.classList.add('draggable')
-  }
-})
-
-window.addEventListener('keyup', (event) => {
-  if (!event.ctrlKey && !event.shiftKey && !event.altKey) {
-    dragOverlay.classList.remove('draggable')
-  }
-})
-
-// Set up keyboard shortcuts
-window.addEventListener('keydown', (event) => {
-  for (const mapping of settings.unwrap().keymaps) {
-    if (
-      (mapping.ctrl === undefined || mapping.ctrl === event.ctrlKey) &&
-      (mapping.shift === undefined || mapping.shift === event.shiftKey) &&
-      (mapping.alt === undefined || mapping.alt === event.altKey) &&
-      mapping.key.toLocaleLowerCase() === event.key.toLocaleLowerCase()
-    ) {
-      console.debug('Detected keyboard shortcut: ' + mapping.action)
-
-      if (!actions.hasOwnProperty(mapping.action)) {
-        fail(`Validated mapping action "${mapping.action}" was not found`, true)
-      }
-
-      actions[mapping.action]()
-
-      event.preventDefault()
-      return false
-    }
-  }
-  return
-})
+// Set up listeners for keyboard shortcuts
+initKeyboardShortcuts()
 
 // Open a new tab when double-clicking on the empty window
 appDom.addEventListener('dblclick', () => {

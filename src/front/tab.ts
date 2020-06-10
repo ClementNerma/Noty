@@ -7,6 +7,7 @@ import { errorDialog, optCancellableChoiceDialog, saveAsDialog } from './dialogs
 import { setCurrentTab } from './state'
 import { simpleHash } from './hash'
 import { writeFileUtf8 } from './data/fs'
+import { handleKeyboardInput } from './keyboard'
 
 export interface TabParams {
   readonly id?: number
@@ -101,6 +102,9 @@ export class Tab {
     // Prepare the tab's editor
     this.editor = ace.edit(this.editorDom)
     this.editor.session.setUseWorker(false)
+
+    // Listen to global keyboard shortcuts
+    this.editor.container.addEventListener('keydown', handleKeyboardInput, true)
 
     // Set path (will update the title DOM as well)
     this.setPath(params.path)
