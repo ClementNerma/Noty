@@ -30,9 +30,9 @@ export function initKeyboardShortcuts() {
 export function handleKeyboardInput(event: KeyboardEvent): void {
   for (const mapping of settings.expect('Cannot read keymaps as settings have not been initialized').keymaps) {
     if (
-      (mapping.ctrl === undefined || mapping.ctrl === event.ctrlKey) &&
-      (mapping.shift === undefined || mapping.shift === event.shiftKey) &&
-      (mapping.alt === undefined || mapping.alt === event.altKey) &&
+      (mapping.ctrl ?? false) === event.ctrlKey &&
+      (mapping.shift ?? false) === event.shiftKey &&
+      (mapping.alt ?? false) === event.altKey &&
       mapping.key.toLocaleLowerCase() === event.key.toLocaleLowerCase()
     ) {
       console.debug('Detected keyboard shortcut: ' + mapping.action)
