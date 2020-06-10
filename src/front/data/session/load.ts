@@ -1,11 +1,10 @@
 import * as fs from 'fs'
 import * as path from 'path'
-
 import { Dictionary, None, Option, Some } from 'typescript-core'
-import { Session, decodeSession } from './decode'
-import { invalidatedSessionPath, savedPath, sessionPath } from '../paths'
 
 import { errorDialog } from '../../dialogs'
+import { invalidatedSessionPath, savedPath, sessionPath } from '../paths'
+import { Session, decodeSession } from './decode'
 
 export function loadSession(): Option<[Session, Dictionary<number, string>]> {
   if (!fs.existsSync(sessionPath)) {

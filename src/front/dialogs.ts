@@ -1,6 +1,5 @@
-import { Enum, List, None, O, Option, Some, assert, enumStr, forceType } from 'typescript-core'
-
 import { remote } from 'electron'
+import { Enum, List, None, Option, Some, assert, enumStr, forceType } from 'typescript-core'
 
 export function errorDialog(message: string, internal = false): void {
   remote.dialog.showMessageBoxSync({

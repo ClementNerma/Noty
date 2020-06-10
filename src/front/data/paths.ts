@@ -1,6 +1,5 @@
-import * as path from 'path'
-
 import { remote } from 'electron'
+import * as path from 'path'
 
 export const appDataPath = path.join(remote.app.getPath('home'), '.noty')
 

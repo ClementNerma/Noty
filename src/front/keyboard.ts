@@ -1,6 +1,6 @@
-import { dragOverlay } from './dom'
-import { settings, fail } from './state'
 import { actions } from './actions'
+import { dragOverlay } from './dom'
+import { fail, settings } from './state'
 
 /**
  * Set up event listener for the keyboard shortcuts

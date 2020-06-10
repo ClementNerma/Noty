@@ -1,10 +1,9 @@
 'use strict'
 
+import { BrowserWindow, Event, Menu, Tray, app, dialog, globalShortcut, screen } from 'electron'
 import * as fs from 'fs'
 import * as minimist from 'minimist'
 import * as npath from 'path'
-
-import { BrowserWindow, Event, Menu, Tray, app, dialog, globalShortcut, screen } from 'electron'
 import { MaybeUninit, proxies } from 'typescript-core'
 
 function fail(errorMessage: string, details?: string): never {

@@ -1,9 +1,10 @@
-import { currentTab, onTabClose, onTabUpdate, saveCompleteState, setCurrentTab, settings, tabs, saveUpdatedSession } from './state'
-
-import { None } from 'typescript-core'
-import { Tab } from './tab'
 import { remote } from 'electron'
+import { None } from 'typescript-core'
+
 import { saveUnsaved } from './data/session/save'
+import { languagesOverlay } from './dom'
+import { currentTab, onTabClose, onTabUpdate, saveCompleteState, saveUpdatedSession, setCurrentTab, settings, tabs } from './state'
+import { Tab } from './tab'
 
 export const actions = {
   previousTab() {

@@ -1,9 +1,10 @@
 import * as path from 'path'
 import { Result } from 'typescript-core'
+
+import { removeFile, writeFileUtf8 } from '../fs'
+import { savedPath, sessionPath } from '../paths'
 import { Session } from './decode'
-import { sessionPath, savedPath } from '../paths'
 import { encodeSession } from './encode'
-import { writeFileUtf8, removeFile } from '../fs'
 
 export function saveSession(session: Session): Result<void, Error> {
   return writeFileUtf8(sessionPath, encodeSession(session))

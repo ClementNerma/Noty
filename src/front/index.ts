@@ -1,20 +1,19 @@
 import './panics'
 
 import * as fs from 'fs'
+import { List, Some, eprintln } from 'typescript-core'
 
-import { List, eprintln, Some } from 'typescript-core'
-import { appDom, languagesOverlay, createElement } from './dom'
-import { dataInit, saveSettings } from './data/fs'
-import { decodeSettings, defaultSettings } from './data/settings'
-import { onTabClose, onTabUpdate, setCurrentTab, settings, tabs, currentTab } from './state'
-import { invalidatedSettingsPath, settingsPath } from './data/paths'
-
-import { Tab } from './tab'
 import { actions } from './actions'
-import { errorDialog } from './dialogs'
+import { dataInit, saveSettings } from './data/fs'
+import { invalidatedSettingsPath, settingsPath } from './data/paths'
 import { loadSession } from './data/session/load'
+import { decodeSettings, defaultSettings } from './data/settings'
+import { errorDialog } from './dialogs'
+import { appDom, createElement, languagesOverlay } from './dom'
 import { languages } from './enums'
 import { initKeyboardShortcuts } from './keyboard'
+import { currentTab, onTabClose, onTabUpdate, setCurrentTab, settings, tabs } from './state'
+import { Tab } from './tab'
 
 // Must be run at startup
 dataInit()

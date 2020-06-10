@@ -1,10 +1,10 @@
-import { List, MaybeUninit, None, Ok, Option, Ref, Result, Some } from 'typescript-core'
-import { removeSaved, saveSession, saveUnsaved } from './data/session/save'
-
-import { Settings } from './data/settings'
-import { Tab } from './tab'
-import { errorDialog } from './dialogs'
 import { remote } from 'electron'
+import { List, MaybeUninit, None, Ok, Option, Ref, Result, Some } from 'typescript-core'
+
+import { removeSaved, saveSession, saveUnsaved } from './data/session/save'
+import { Settings } from './data/settings'
+import { errorDialog } from './dialogs'
+import { Tab } from './tab'
 
 export function fail(errorMessage: string, internal = false): never {
   errorDialog(errorMessage, internal)

@@ -1,4 +1,4 @@
-import { Decoder, List, Option, Decoders as d, JsonDecoders as j } from 'typescript-core'
+import { Decoder, Decoders as d, JsonDecoders as j, List, Option } from 'typescript-core'
 
 import { CursorPosition } from '../../tab'
 

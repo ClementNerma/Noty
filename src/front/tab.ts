@@ -1,13 +1,13 @@
 import { Either, FailableFuture, Left, List, None, O, Option, Result, Right, Some, With, assert, parallel } from 'typescript-core'
+
+import { writeFileUtf8 } from './data/fs'
 import { Settings, applySettings } from './data/settings'
+import { errorDialog, optCancellableChoiceDialog, saveAsDialog } from './dialogs'
 import { createElement, editorsDom, insertNthChild, statusBarDom, titlesDom } from './dom'
 import { defaultLanguage, languages } from './enums'
-import { errorDialog, optCancellableChoiceDialog, saveAsDialog } from './dialogs'
-
-import { setCurrentTab } from './state'
 import { simpleHash } from './hash'
-import { writeFileUtf8 } from './data/fs'
 import { handleKeyboardInput } from './keyboard'
+import { setCurrentTab } from './state'
 
 export interface TabParams {
   readonly id?: number

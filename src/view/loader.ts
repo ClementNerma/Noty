@@ -1,8 +1,8 @@
+import { remote } from 'electron'
 import * as fs from 'fs'
 import * as path from 'path'
-import * as zlib from 'zlib'
-import { remote } from 'electron'
 import { MaybeUninit } from 'typescript-core'
+import * as zlib from 'zlib'
 
 /**
  * Raise an error during loading
@@ -67,5 +67,5 @@ if (!fs.existsSync(mainPath)) {
   loadingError(`Application's main file was not found at path "${mainPath}"`)
 }
 
-// Load it (raw import is used to trigger side effects without actually importing anything)
-import '../front/index'
+// Load it
+require('../front/index')
