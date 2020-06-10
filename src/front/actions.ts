@@ -8,29 +8,29 @@ import { Tab } from './tab'
 
 export const actions = {
   previousTab() {
-    currentTab.read().some((currentTab) => {
+    currentTab.some((currentTab) => {
       const currentTabId = tabs.indexOf(currentTab)
       tabs.get(currentTabId === 0 ? tabs.length - 1 : currentTabId - 1).some((tab) => setCurrentTab(tab))
     })
   },
 
   nextTab() {
-    currentTab.read().some((currentTab) => {
+    currentTab.some((currentTab) => {
       const currentTabId = tabs.indexOf(currentTab)
       tabs.get(currentTabId === tabs.length - 1 ? 0 : currentTabId + 1).some((tab) => setCurrentTab(tab))
     })
   },
 
   saveTab() {
-    currentTab.read().some((currentTab) => currentTab.save())
+    currentTab.some((currentTab) => currentTab.save())
   },
 
   saveTabAs() {
-    currentTab.read().some((currentTab) => currentTab.saveAs())
+    currentTab.some((currentTab) => currentTab.saveAs())
   },
 
   closeTab() {
-    currentTab.read().match({
+    currentTab.match({
       Some: async (tab) => {
         const currentTabId = tabs.indexOf(tab)
 
@@ -47,7 +47,7 @@ export const actions = {
             tab.setActive(false)
           }
 
-          currentTab.write(None())
+          currentTab.take()
         }
 
         tabs.remove(tab)
@@ -58,7 +58,7 @@ export const actions = {
   },
 
   async closeAllTabs(): Promise<boolean> {
-    const oldCurrentTab = currentTab.read()
+    const oldCurrentTab = currentTab.clone()
 
     for (const tab of tabs) {
       setCurrentTab(tab)
@@ -70,15 +70,12 @@ export const actions = {
     }
 
     tabs.clear()
-    currentTab.write(None())
+    currentTab.take()
     return true
   },
 
   createTab() {
-    const position = currentTab
-      .read()
-      .map((tab) => tabs.indexOf(tab) + 1)
-      .unwrapOr(0)
+    const position = currentTab.map((tab) => tabs.indexOf(tab) + 1).unwrapOr(0)
 
     const tab = new Tab({
       settings: settings.expect('Could not create a tab before settings were loaded'),
@@ -95,6 +92,10 @@ export const actions = {
 
     saveUpdatedSession()
     saveUnsaved(tab.id, '')
+  },
+
+  toggleLanguagesSelector() {
+    currentTab.some(() => languagesOverlay.classList.toggle('visible'))
   },
 
   exit() {

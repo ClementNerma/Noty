@@ -1,5 +1,5 @@
 import { remote } from 'electron'
-import { List, MaybeUninit, None, Ok, Option, Ref, Result, Some } from 'typescript-core'
+import { List, MaybeUninit, None, Ok, Option, Result } from 'typescript-core'
 
 import { removeSaved, saveSession, saveUnsaved } from './data/session/save'
 import { Settings } from './data/settings'
@@ -19,7 +19,7 @@ export const settings = new MaybeUninit<Settings>()
 export const tabs = new List<Tab>()
 
 // Current tab
-export const currentTab: Ref<Option<Tab>> = Ref.wrap(None())
+export const currentTab: Option<Tab> = None()
 
 // Save timeout
 const saveTimeout = None<NodeJS.Timeout>()
@@ -34,12 +34,12 @@ export function setCurrentTab(tab: Tab) {
 
   tab.setActive(true)
 
-  currentTab.write(Some(tab))
+  currentTab.replace(tab)
 }
 
 export function saveUpdatedSession(): Result<void, Error> {
   return saveSession({
-    activeTab: currentTab.read().map((currentTab) => tabs.indexOf(currentTab)),
+    activeTab: currentTab.map((currentTab) => tabs.indexOf(currentTab)),
     tabs: tabs.map((tab) => ({
       id: tab.id,
       path: tab.getPath(),
