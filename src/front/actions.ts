@@ -2,7 +2,6 @@ import { remote } from 'electron'
 import { None } from 'typescript-core'
 
 import { saveUnsaved } from './data/session/save'
-import { languagesOverlay } from './dom'
 import { currentTab, onTabClose, onTabUpdate, saveCompleteState, saveUpdatedSession, setCurrentTab, settings, tabs } from './state'
 import { Tab } from './tab'
 
@@ -92,10 +91,6 @@ export const actions = {
 
     saveUpdatedSession()
     saveUnsaved(tab.id, '')
-  },
-
-  toggleLanguagesSelector() {
-    currentTab.some(() => languagesOverlay.classList.toggle('visible'))
   },
 
   exit() {

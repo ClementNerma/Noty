@@ -51,20 +51,6 @@ body:not(.loading) #loading-overlay {
   -webkit-app-region: drag;
 }
 
-/* Languages selection overlay */
-
-#languages-overlay {
-  position: absolute;
-  top: 0;
-  left: 33%;
-  right: 33%;
-  bottom: 50%;
-}
-
-#languages-overlay:not(.visible) {
-  display: none;
-}
-
 #app {
   display: flex;
   flex-direction: column;

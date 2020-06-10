@@ -1,13 +1,12 @@
 import './panics'
 
-import { List, Some, eprintln } from 'typescript-core'
+import { List, eprintln } from 'typescript-core'
 
 import { actions } from './actions'
 import { loadSession } from './data/session/load'
-import { appDom, createElement, languagesOverlay } from './dom'
-import { languages } from './enums'
+import { appDom } from './dom'
 import { initKeyboardShortcuts } from './keyboard'
-import { currentTab, onTabClose, onTabUpdate, setCurrentTab, settings, tabs } from './state'
+import { onTabClose, onTabUpdate, setCurrentTab, settings, tabs } from './state'
 import { Tab } from './tab'
 
 // Restore previous session
