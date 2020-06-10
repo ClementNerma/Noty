@@ -1,7 +1,8 @@
 import { Either, FailableFuture, Left, List, None, O, Option, Result, Right, Some, With, assert, parallel } from 'typescript-core'
 
 import { writeFileUtf8 } from './data/fs'
-import { Settings, applySettings } from './data/settings'
+import { applySettings } from './data/settings/load'
+import { Settings } from './data/settings/types'
 import { errorDialog, optCancellableChoiceDialog, saveAsDialog } from './dialogs'
 import { createElement, editorsDom, insertNthChild, statusBarDom, titlesDom } from './dom'
 import { defaultLanguage, languages } from './enums'

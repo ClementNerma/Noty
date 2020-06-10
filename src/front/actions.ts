@@ -78,7 +78,7 @@ export const actions = {
     const position = currentTab.map((tab) => tabs.indexOf(tab) + 1).unwrapOr(0)
 
     const tab = new Tab({
-      settings: settings.expect('Could not create a tab before settings were loaded'),
+      settings: settings,
       position,
       path: None(),
       language: None(),

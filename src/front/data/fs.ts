@@ -2,7 +2,8 @@ import * as fs from 'fs'
 import { Err, Ok, Result } from 'typescript-core'
 
 import { appDataPath, savedPath, settingsPath } from './paths'
-import { Settings, defaultSettings, encodeSettings } from './settings'
+import { defaultSettings } from './settings/load'
+import { Settings, encodeSettings } from './settings/types'
 
 export function dataInit() {
   if (!fs.existsSync(appDataPath)) {

@@ -1,43 +1,21 @@
 import './panics'
 
-import * as fs from 'fs'
 import { List, Some, eprintln } from 'typescript-core'
 
 import { actions } from './actions'
-import { dataInit, saveSettings } from './data/fs'
-import { invalidatedSettingsPath, settingsPath } from './data/paths'
 import { loadSession } from './data/session/load'
-import { decodeSettings, defaultSettings } from './data/settings'
-import { errorDialog } from './dialogs'
 import { appDom, createElement, languagesOverlay } from './dom'
 import { languages } from './enums'
 import { initKeyboardShortcuts } from './keyboard'
 import { currentTab, onTabClose, onTabUpdate, setCurrentTab, settings, tabs } from './state'
 import { Tab } from './tab'
 
-// Must be run at startup
-dataInit()
-
-// Load settings
-settings.init(
-  decodeSettings(fs.readFileSync(settingsPath, 'utf8')).unwrapOrElse((err) => {
-    errorDialog('Failed to decode settings file, falling back to default settings instead.\nReason:\n' + err.render())
-    fs.renameSync(settingsPath, invalidatedSettingsPath)
-
-    const settings = defaultSettings()
-    saveSettings(defaultSettings())
-    return settings
-  })
-)
-
 // Restore previous session
 loadSession().map(([session, saved]) => {
   const newTabs = new List<Tab>()
 
   for (const tab of session.tabs) {
-    newTabs.push(
-      new Tab({ settings: settings.unwrap(), ...tab, content: saved.get(tab.id).unwrapOr(''), onUpdate: onTabUpdate, onClose: onTabClose })
-    )
+    newTabs.push(new Tab({ settings, ...tab, content: saved.get(tab.id).unwrapOr(''), onUpdate: onTabUpdate, onClose: onTabClose }))
   }
 
   const activeTab = session.activeTab.andThen((activeTabIndex) =>

@@ -1,8 +1,9 @@
 import { remote } from 'electron'
-import { List, MaybeUninit, None, Ok, Option, Result } from 'typescript-core'
+import { List, None, Ok, Option, Result, assert } from 'typescript-core'
 
+import { dataInit } from './data/fs'
 import { removeSaved, saveSession, saveUnsaved } from './data/session/save'
-import { Settings } from './data/settings'
+import { loadSettings } from './data/settings/load'
 import { errorDialog } from './dialogs'
 import { Tab } from './tab'
 
@@ -12,8 +13,17 @@ export function fail(errorMessage: string, internal = false): never {
   throw new Error(errorMessage)
 }
 
+// Singleton to ensure this module isn't run twice
+const _initProp = '___appStateModuleAlreadyInit'
+assert(!(window as any)[_initProp], 'State module was run twice!')
+;(window as any)[_initProp] = true
+assert!((window as any)[_initProp], 'Failed to save state module initialization indicator')
+
+// Must be run at startup
+dataInit()
+
 // Settings
-export const settings = new MaybeUninit<Settings>()
+export const settings = loadSettings()
 
 // Opened tabs
 export const tabs = new List<Tab>()
@@ -75,7 +85,7 @@ export function onTabUpdate(tab: Tab) {
     .replace(
       setTimeout(() => {
         saveTabData(tab)
-      }, settings.expect('Internal error: received tab update before settings are initialized').autoSaveDelay)
+      }, settings.autoSaveDelay)
     )
 }
 

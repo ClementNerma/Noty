@@ -28,7 +28,7 @@ export function initKeyboardShortcuts() {
  * @param event An input event (should be from a 'keydown' event)
  */
 export function handleKeyboardInput(event: KeyboardEvent): void {
-  for (const mapping of settings.expect('Cannot read keymaps as settings have not been initialized').keymaps) {
+  for (const mapping of settings.keymaps) {
     if (
       (mapping.ctrl ?? false) === event.ctrlKey &&
       (mapping.shift ?? false) === event.shiftKey &&
